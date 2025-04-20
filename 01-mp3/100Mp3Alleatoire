@@ -1,8 +1,8 @@
 #!/bin/bash
 # Dossier source contenant les fichiers MP3
-SOURCE_DIR="/home/milane/Musique/JukeBox"
+SOURCE_DIR="/chemin/vers/dossier_bliotheque"
 # Dossier de destination pour les fichiers copiés
-DEST_DIR="/home/milane/test"
+DEST_DIR="/chemin/vers/dossier/de/destination"
 # Nombre de fichiers à copier
 NUM_FILES_TO_COPY=100
 # Créer le dossier de destination s'il n'existe pas
