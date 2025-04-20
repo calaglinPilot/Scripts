@@ -1,0 +1,44 @@
+#!/bin/bash
+# Dossier source contenant les fichiers MP3
+SOURCE_DIR="/home/milane/Musique/JukeBox"
+# Dossier de destination pour les fichiers copiés
+DEST_DIR="/home/milane/test"
+# Nombre de fichiers à copier
+NUM_FILES_TO_COPY=100
+# Créer le dossier de destination s'il n'existe pas
+mkdir -p "$DEST_DIR"
+echo "Dossier source : $SOURCE_DIR"
+# Utiliser find pour lister tous les fichiers MP3 dans le dossier source et ses sous-dossiers et les stocker dans un tableau
+echo "Lancement de la commande find..."
+mp3_files=()
+while IFS= read -r -d '' file; do
+    echo "Fichier trouvé par find : $file"
+    mp3_files+=("$file")
+done < <(find "$SOURCE_DIR" -type f -name "*.mp3" -print0)
+echo "Fin de la recherche de fichiers."
+# Compter le nombre total de fichiers MP3 trouvés
+num_total_files="${#mp3_files[@]}"
+echo "Nombre total de fichiers trouvés : $num_total_files"
+# Vérifier s'il y a au moins NUM_FILES_TO_COPY fichiers MP3
+if [ "$num_total_files" -lt "$NUM_FILES_TO_COPY" ]; then
+    echo "Attention : Seulement $num_total_files fichiers MP3 trouvés. Copie de tous les fichiers disponibles."
+    num_files_to_copy="$num_total_files"
+else
+    num_files_to_copy="$NUM_FILES_TO_COPY"
+fi
+# Sélectionner aléatoirement NUM_FILES_TO_COPY (ou moins si moins sont disponibles) fichiers MP3
+if [ "$num_files_to_copy" -gt 0 ]; then
+    # Mélanger le tableau des fichiers MP3
+    shuffled_indices=$(shuf -i 0-"$(($num_total_files - 1))" -n "$num_files_to_copy")
+    # Copier les fichiers sélectionnés vers le dossier de destination
+    echo "Début de la copie des fichiers..."
+    for index in $shuffled_indices; do
+        file="${mp3_files[$index]}"
+        echo "Copie du fichier : $file vers $DEST_DIR"
+        cp "$file" "$DEST_DIR"
+    done
+    echo "$num_files_to_copy fichiers MP3 copiés aléatoirement vers $DEST_DIR"
+else
+    echo "Aucun fichier MP3 trouvé dans $SOURCE_DIR."
+fi
+exit 0
